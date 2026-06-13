@@ -7,14 +7,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import static com.insurance.eventproducer.constants.ClaimsConstants.RAW_CLAIM_TOPIC;
+
 @Service
 public class ClaimPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(ClaimPublisher.class);
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Value("${app.topic.hello}")
-    private String topic;
+    private String topic = RAW_CLAIM_TOPIC;
 
     public ClaimPublisher(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
