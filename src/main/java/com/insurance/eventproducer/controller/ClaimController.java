@@ -1,5 +1,6 @@
 package com.insurance.eventproducer.controller;
 
+import com.insurance.eventproducer.model.Claim;
 import com.insurance.eventproducer.publisher.ClaimPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class ClaimController {
     }
 
     @PostMapping("/v1/publish")
-    public ResponseEntity<String> publish(@RequestBody String message) {
+    public ResponseEntity<String> publish(@RequestBody Claim message) {
         publisher.publish(message);
         return ResponseEntity.ok("Message published");
     }

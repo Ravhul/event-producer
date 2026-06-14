@@ -1,18 +1,21 @@
 package com.insurance.eventproducer.model;
 
-import com.insurance.eventproducer.enums.ClaimStatus;
-import com.insurance.eventproducer.enums.ClaimType;
-
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 
 public record Claim(
-        String claimId,
-        String policyNumber,
-        String claimantName,
-        BigDecimal claimAmount,
-        ClaimType claimType,
-        LocalDate incidentDate,
-        ClaimStatus status
+        String claimSk,
+        String rxNbr,
+        String fillNbr,
+        String locNbr,
+        String pdRvInd,
+        String binNbr,
+        String pcn,
+        String plnId,
+        String hrchySk,
+        String ndc,
+        String ndcSk,
+        BigDecimal amount,
+        Instant claimCreatedTs
 ) {
 }
