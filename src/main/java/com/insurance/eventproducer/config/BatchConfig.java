@@ -1,10 +1,18 @@
 package com.insurance.eventproducer.config;
 
 import com.insurance.eventproducer.model.Claim;
+import com.insurance.eventproducer.publisher.ClaimPublisher;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -33,4 +41,34 @@ public class BatchConfig {
         );
         return new ListItemReader<>(claims);
     }
+
+    @Bean
+    ItemWriter<Claim> claimWriter(ClaimPublisher publisher){
+        return chunk -> {
+            for(Claim claim: chunk){
+                publisher.publish(claim);
+            }
+        };
+    }
+
+    @Bean
+    Step publishStep(JobRepository jobRepository,
+                     PlatformTransactionManager transactionManager,
+                     ItemReader<Claim> claimReader,
+                     ItemWriter<Claim> claimWriter){
+        return new StepBuilder("publishStep",jobRepository)
+                .<Claim,Claim>chunk(2,transactionManager)
+                .reader(claimReader)
+                .writer(claimWriter)
+                .build();
+    }
+
+    @Bean
+    Job publishClaimJob(JobRepository jobRepository, Step publishStep){
+        return new JobBuilder("publishClaimJob", jobRepository)
+                .start(publishStep)
+                .build();
+    }
 }
+
+
